@@ -18,8 +18,14 @@ from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-from data_loader import get_df, get_summary_stats
-from visualizer import CHART_REGISTRY
+try:
+    # Package-style imports (production/deploy, e.g. uvicorn backend.main:app)
+    from backend.data_loader import get_df, get_summary_stats
+    from backend.visualizer import CHART_REGISTRY
+except ModuleNotFoundError:
+    # Local fallback when running from backend/ as cwd (uvicorn main:app)
+    from data_loader import get_df, get_summary_stats
+    from visualizer import CHART_REGISTRY
 
 load_dotenv()
 

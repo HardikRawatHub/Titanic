@@ -17,9 +17,16 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from data_loader import get_df, get_summary_stats
-from visualizer import CHART_REGISTRY
-from agent import run_agent
+try:
+    # Package-style imports (production/deploy, e.g. uvicorn backend.main:app)
+    from backend.data_loader import get_df, get_summary_stats
+    from backend.visualizer import CHART_REGISTRY
+    from backend.agent import run_agent
+except ModuleNotFoundError:
+    # Local fallback when running from backend/ as cwd (uvicorn main:app)
+    from data_loader import get_df, get_summary_stats
+    from visualizer import CHART_REGISTRY
+    from agent import run_agent
 
 # ── App ─────────────────────────────────────────────────────────────────────
 app = FastAPI(
