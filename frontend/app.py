@@ -20,7 +20,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+BACKEND_URL = (
+    st.secrets.get("API_BASE_URL")
+    or os.getenv("API_BASE_URL")
+    or os.getenv("BACKEND_URL")
+    or "http://localhost:8000"
+).rstrip("/")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -251,8 +256,8 @@ with st.sidebar:
     if info:
         st.success(f"✅ Connected — {info['rows']} passengers loaded")
     else:
-        st.error("❌ Backend offline. Start FastAPI first.")
-        st.code("cd backend\nuvicorn main:app --reload", language="bash")
+        st.error("❌ Backend not reachable. Check API_BASE_URL secret.")
+        st.code('API_BASE_URL = "https://your-api.onrender.com"', language="toml")
 
     # ── Dataset stats ───────────────────────────────────────────────────────
     if info:
