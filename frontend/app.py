@@ -20,12 +20,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BACKEND_URL = (
-    st.secrets.get("API_BASE_URL")
-    or os.getenv("API_BASE_URL")
-    or os.getenv("BACKEND_URL")
-    or "http://localhost:8000"
-).rstrip("/")
+def _resolve_backend_url() -> str:
+    secret_url = None
+    try:
+        secret_url = st.secrets["API_BASE_URL"]
+    except Exception:
+        secret_url = None
+
+    candidates = [
+        secret_url,
+        os.getenv("API_BASE_URL"),
+        os.getenv("BACKEND_URL"),
+        "http://localhost:8000",
+    ]
+    for value in candidates:
+        if isinstance(value, str) and value.strip():
+            return value.strip().rstrip("/")
+    return "http://localhost:8000"
+
+
+BACKEND_URL = _resolve_backend_url()
 
 
 # ═══════════════════════════════════════════════════════════════════════════
